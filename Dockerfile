@@ -1,8 +1,4 @@
-# Damn Vulnerable NodeJS Application
 
-dockerfile
-    # --- المرحلة الأولى: بناء التطبيق ---
-    # استخدم صورة Node.js كقاعدة للبناء
     FROM node:18-alpine AS build
 
     # حدد مجلد العمل داخل الحاوية
