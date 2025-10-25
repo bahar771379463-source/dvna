@@ -1,13 +1,37 @@
 # Damn Vulnerable NodeJS Application
 
-FROM node:carbon
-LABEL MAINTAINER "Subash SN"
+dockerfile
+    # --- المرحلة الأولى: بناء التطبيق ---
+    # استخدم صورة Node.js كقاعدة للبناء
+    FROM node:18-alpine AS build
 
-WORKDIR /app
+    # حدد مجلد العمل داخل الحاوية
+    WORKDIR /app
 
-COPY . .
+    # انسخ ملفات package.json و package-lock.json
+    COPY package*.json ./
 
-RUN chmod +x /app/entrypoint.sh \
-	&& npm install
+    # ثبت الاعتماديات
+    RUN npm install
 
-CMD ["bash", "/app/entrypoint.sh"]
+    # انسخ باقي ملفات التطبيق
+    COPY . .
+
+    # --- المرحلة الثانية: تشغيل التطبيق ---
+    # استخدم صورة Node.js أصغر حجماً للتشغيل
+    FROM node:18-alpine
+
+    WORKDIR /app
+
+    # انسخ الاعتماديات التي تم تثبيتها من مرحلة البناء
+    COPY --from=build /app/node_modules ./node_modules
+
+    # انسخ ملفات التطبيق التي تم بناؤها
+    COPY --from=build /app .
+
+    # عرّف المنفذ الذي يعمل عليه التطبيق
+    EXPOSE 9090
+
+    # الأمر الافتراضي لتشغيل التطبيق
+    CMD [ "node", "app.js" ]
+    
