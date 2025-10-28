@@ -11,7 +11,6 @@ RUN npm install --production
 
 COPY . .
 
-# المرحلة الثانية: الصورة النهائية النظيفة
 FROM node:12-slim
 
 WORKDIR /usr/src/app
