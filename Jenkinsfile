@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Hello') {
             steps {
-                echo 'Hello World! The connection is successful.'
+                echo 'Hello World!  connection is successful.'
             }
         }
     }
