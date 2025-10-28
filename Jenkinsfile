@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     echo "Building the Docker image..."
-                    // أمر بناء Docker الصريح
+                    
                     sh "docker build -t ${DOCKER_USERNAME}/${APP_NAME}:latest ."
                 }
             }
