@@ -1,12 +1,11 @@
-FROM node:18-alpine AS build
-WORKDIR /app
+FROM node:10-alpine AS build
+WORKDIR /usr/src/app
+RUN apk add --no-cache --virtual .gyp python make g++
 COPY package*.json ./
 RUN npm install --production
-
-FROM node:18-alpine
-WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules
 COPY . .
-EXPOSE 9090
-CMD ["node", "app.js"]
-    
+FROM node:10-alpine
+WORKDIR /usr/src/app
+COPY --from=build /usr/src/app .
+EXPOSE 3000
+CMD [ "npm", "start" ]
