@@ -1,11 +1,23 @@
-FROM node:10-alpine AS build
+FROM node:12 AS build
+
 WORKDIR /usr/src/app
-RUN apk add --no-cache --virtual .gyp python make g++
+
+# تثبيت الأدوات الضرورية لبناء المكتبات على Debian
+RUN apt-get update && apt-get install -y python make g++ --no-install-recommends
+
 COPY package*.json ./
+
 RUN npm install --production
+
 COPY . .
-FROM node:10-alpine
+
+# المرحلة الثانية: الصورة النهائية النظيفة
+FROM node:12-slim
+
 WORKDIR /usr/src/app
+
+# نسخ الملفات من مرحلة البناء
 COPY --from=build /usr/src/app .
+
 EXPOSE 3000
 CMD [ "npm", "start" ]
