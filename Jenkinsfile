@@ -18,21 +18,19 @@ pipeline {
             }
         }
 
-        stage('Login & Push to Docker Hub') {
-            steps {
-                // نستخدم Vault لسحب كلمة المرور. هذا الجزء حساس.
-                // سنستخدم اسم ID مختلف لبيانات الاعتماد لتجنب أي التباس
-                withCredentials([string(credentialsId: 'vault-root-tokin', variable: 'DOCKAR_HUB_PASSWORD')]) {
-                    echo "Logging in to Docker Hub..."
-                    // أمر تسجيل الدخول الصريح باستخدام كلمة المرور من Vault
-                    sh "echo ${DOCKAR_HUB_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                        
-                    echo "Pushing the Docker image..."
-                    // أمر الدفع الصريح
-                    sh "docker push ${DOCKER_USERNAME}/${APP_NAME}:latest"
-                }
-            }
+      stage('Login & Push to Docker Hub') {
+    steps {
+        // استخدم الـ ID الذي أنشأته للتو
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            
+            // تسجيل الدخول باستخدام المتغيرات
+            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+            
+            // دفع الصورة
+            sh "docker push bahar771379463/dvna-app:latest"
         }
+    }
+}
     }
         
     post {
