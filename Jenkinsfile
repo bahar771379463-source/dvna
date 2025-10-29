@@ -20,7 +20,7 @@ pipeline {
 
       stage('Login & Push to Docker Hub') {
     steps {
-        // استخدم الـ ID الذي أنشأته للتو
+        
         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             
             // تسجيل الدخول باستخدام المتغيرات
