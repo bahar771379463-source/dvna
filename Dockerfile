@@ -15,7 +15,7 @@ FROM node:12-slim
 
 WORKDIR /usr/src/app
 
-# نسخ الملفات من مرحلة البناء
+
 COPY --from=build /usr/src/app .
 
 EXPOSE 3000
