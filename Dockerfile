@@ -1,22 +1,36 @@
-FROM node:12 AS build
+FROM node:10-alpine AS build
 
+# نحدد مجلد العمل داخل الحاوية
 WORKDIR /usr/src/app
 
-# تثبيت الأدوات الضرورية لبناء المكتبات على Debian
-RUN apt-get update && apt-get install -y python make g++ --no-install-recommends
+# تثبيت الأدوات الضرورية للبناء (بشكل مؤقت)
+# --no-cache: لا تحتفظ بملفات التثبيت المؤقتة
+# --virtual .build-deps: أنشئ مجموعة وهمية من الحزم اسمها ".build-deps"
+# هذا يسمح لنا بحذفها جميعًا بسهولة لاحقًا
+RUN apk add --no-cache --virtual .build-deps python make g++
 
+# ننسخ ملفات package.json أولاً للاستفادة من التخزين المؤقت لـ Docker
 COPY package*.json ./
 
+# نقوم بتثبيت مكتبات المشروع
+# سيستخدم هذا الأمر الأدوات التي قمنا بتثبيتها لبناء bcrypt
 RUN npm install --production
 
-COPY . .
+# =================================================================
+# المرحلة الثانية: الصورة النهائية (Final Stage)
+# =================================================================
+# نبدأ من صورة Alpine نظيفة وصغيرة جدًا مرة أخرى
+FROM node:10-alpine
 
-FROM node:12-slim
-
+# نحدد مجلد العمل
 WORKDIR /usr/src/app
 
-
+# ننسخ فقط الملفات الضرورية من مرحلة البناء (وليس أدوات البناء)
+# هذا هو سر الحصول على صورة نهائية صغيرة!
 COPY --from=build /usr/src/app .
 
+# نفتح المنفذ الذي يعمل عليه التطبيق
 EXPOSE 3000
+
+# الأمر الذي سيتم تشغيله عند بدء الحاوية
 CMD [ "npm", "start" ]
