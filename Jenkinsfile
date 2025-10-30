@@ -26,7 +26,7 @@ pipeline {
             // تسجيل الدخول باستخدام المتغيرات
             sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
             
-            // دفع الصورة
+           
             sh "docker push bahar771379463/dvna-app:latest"
         }
     }
