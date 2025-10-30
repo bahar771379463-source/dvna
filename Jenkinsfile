@@ -1,4 +1,4 @@
-pipeline {
+pipelpine {
     agent any
 
     environment {
@@ -23,7 +23,7 @@ pipeline {
         
         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             
-            // تسجيل الدخول باستخدام المتغيرات
+            
             sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
             
            
